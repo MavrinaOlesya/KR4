@@ -1,0 +1,100 @@
+public class Money_ {
+    private long rubles; // Поле для рублей
+    private byte kopecks; // Поле для копеек, byte здесь достаточно, так как максимум 99 копеек
+
+    // Конструктор класса
+    public Money_(long rubles, byte kopecks) {
+        this.rubles = rubles;
+        this.kopecks = kopecks;
+        normalize();
+    }
+
+    // Нормализация значений, если копеек больше 99
+    private void normalize() {
+        if (kopecks > 99) {
+            rubles += kopecks / 100;
+            kopecks %= 100;
+        }
+    }
+
+    // Сложение сумм
+    public Money_ add(Money_ other) {
+        return new Money_(this.rubles + other.rubles, (byte)(this.kopecks + other.kopecks));
+    }
+
+    // Вычитание сумм
+    public Money_ subtract(Money_ other) throws Exception {
+        long r = this.rubles - other.rubles;
+        byte k = (byte)(this.kopecks - other.kopecks);
+        if (r < 0 || (r == 0 && k < 0)) {
+            throw new Exception("Результат  не может быть отрицательным");
+        }
+        return new Money_(r, k);
+    }
+
+    // Деление суммы на дробное число
+    public Money_ divide(double divisor) throws Exception {
+        if (divisor == 0) {
+            throw new Exception("Деление на ноль");
+        }
+        double totalKopecks = this.rubles * 100 + this.kopecks;
+        totalKopecks /= divisor;
+        return new Money_((long)(totalKopecks / 100), (byte)(totalKopecks % 100));
+    }
+
+    // Умножение на дробное число
+    public Money_ multiply(double multiplier) {
+        double totalKopecks = this.rubles * 100 + this.kopecks;
+        totalKopecks *= multiplier;
+        return new Money_((long)(totalKopecks / 100), (byte)(totalKopecks % 100));
+    }
+
+    // Операции сравнения
+    public boolean equals(Money_ other) {
+        return this.rubles == other.rubles && this.kopecks == other.kopecks;
+    }
+
+    // Вывод денежной суммы на экран
+    public String toString() {
+        return rubles + "," + String.format("%02d", kopecks) + " руб.";
+    }
+
+    // Геттеры и сеттеры
+    public long getRubles() {
+        return rubles;
+    }
+
+    public void setRubles(long rubles) {
+        this.rubles = rubles;
+    }
+
+    public byte getKopecks() {
+        return kopecks;
+    }
+
+    public void setKopecks(byte kopecks) {
+        this.kopecks = kopecks;
+        normalize();
+    }
+
+    public static void main(String[] args) {
+        try {
+            Money_ m1 = new Money_(1000, (byte)520);
+            Money_ m2 = new Money_(500, (byte)705);
+            System.out.println("Сумма m1: " + m1);
+            System.out.println("Сумма m2: " + m2);
+
+            // Проверка методов
+            System.out.println("Сложение: " + m1.add(m2));
+            System.out.println("Вычитание: " + m1.subtract(m2));
+            System.out.println("Деление: " + m1.divide(2.5));
+            System.out.println("Умножение: " + m1.multiply(2.5));
+            System.out.println("Сравнение: " + m1.equals(m2));
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+}
+
+
+
